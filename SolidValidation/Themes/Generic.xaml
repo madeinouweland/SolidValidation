@@ -1,0 +1,109 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:SolidValidation.Controls"
+    xmlns:local="clr-namespace:SolidValidation" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
+    mc:Ignorable="d">
+
+    <Style TargetType="controls:InputContainer">
+        <Setter Property="Caption" Value="Caption" />
+        <Setter Property="CaptionWidth" Value="150" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:InputContainer">
+                    <Border x:Name="valid1" BorderBrush="#00FF0000" BorderThickness="1" Background="#00FF0000" Padding="5" d:DesignWidth="357" d:DesignHeight="56">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="Validation">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.3">
+                                        <VisualTransition.GeneratedEasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </VisualTransition.GeneratedEasingFunction>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="ValidationNormal">
+                                    <Storyboard>
+                                		<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="valid1" d:IsOptimized="True"/>
+                                	</Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ValidationError">
+                                    <Storyboard>
+                                		<ColorAnimation Duration="0" To="Red" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" Storyboard.TargetName="valid1" d:IsOptimized="True"/>
+                                		<ColorAnimation Duration="0" To="#3FFF0000" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Storyboard.TargetName="valid1" d:IsOptimized="True"/>
+                                		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="validation">
+                                			<DiscreteObjectKeyFrame KeyTime="0">
+                                				<DiscreteObjectKeyFrame.Value>
+                                					<Visibility>Visible</Visibility>
+                                				</DiscreteObjectKeyFrame.Value>
+                                			</DiscreteObjectKeyFrame>
+                                		</ObjectAnimationUsingKeyFrames>
+                                		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="valid1">
+                                			<DiscreteObjectKeyFrame KeyTime="0">
+                                				<DiscreteObjectKeyFrame.Value>
+                                					<Thickness>0,0,0,3</Thickness>
+                                				</DiscreteObjectKeyFrame.Value>
+                                			</DiscreteObjectKeyFrame>
+                                		</ObjectAnimationUsingKeyFrames>
+                                	</Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="OptionalGroup">
+                            	<VisualState x:Name="IsRequired">
+                            		<Storyboard>
+                            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="textBlock">
+                            				<DiscreteObjectKeyFrame KeyTime="0">
+                            					<DiscreteObjectKeyFrame.Value>
+                            						<Visibility>Collapsed</Visibility>
+                            					</DiscreteObjectKeyFrame.Value>
+                            				</DiscreteObjectKeyFrame>
+                            			</ObjectAnimationUsingKeyFrames>
+                            		</Storyboard>
+                            	</VisualState>
+                            	<VisualState x:Name="IsNullable">
+                            		<Storyboard>
+                            			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="textBlock">
+                            				<DiscreteObjectKeyFrame KeyTime="0">
+                            					<DiscreteObjectKeyFrame.Value>
+                            						<Visibility>Visible</Visibility>
+                            					</DiscreteObjectKeyFrame.Value>
+                            				</DiscreteObjectKeyFrame>
+                            			</ObjectAnimationUsingKeyFrames>
+                            		</Storyboard>
+                            	</VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid x:Name="InputContainerRoot" DataContext="{TemplateBinding EditProp}" Margin="0">
+                            <Grid.Resources>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource DefaultTextBlockStyle}" />
+                            </Grid.Resources>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <i:Interaction.Behaviors>
+                                <ei:DataStateBehavior Binding="{Binding HasError}" Value="true" TrueState="ValidationError" FalseState="ValidationNormal"/>
+                            </i:Interaction.Behaviors>
+                            <StackPanel Margin="0,0,10,0" Width="{TemplateBinding CaptionWidth}" VerticalAlignment="Center">
+                            	<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            		<TextBlock TextWrapping="Wrap" VerticalAlignment="Center" Text="{TemplateBinding Caption}" />
+                            		<TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="(optional)" FontStyle="Italic" Visibility="Collapsed" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                            	</StackPanel>
+                            </StackPanel>
+                        	<ContentPresenter x:Name="InputContainerPresenter" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        	<TextBlock x:Name="validation" Margin="0" TextWrapping="Wrap" Text="{Binding ErrorLabel}" Grid.Row="1" Grid.Column="1" Foreground="Red" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
